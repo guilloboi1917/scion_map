@@ -1,4 +1,4 @@
-FROM scion-base:1.0
+FROM scion-base-isd02:1.0
 
 # Copy generated AS3 PKI from base image.
 RUN cp /opt/tutorial-pki/AS3/*.key /etc/scion/crypto/as/ && \
