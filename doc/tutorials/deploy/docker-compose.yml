@@ -3,6 +3,17 @@
 name: "SCION Tutorial"
 
 services:
+  # ISD router to connect the two ISD networks
+  isd-router:
+      image: alpine  # Tiny Linux distro
+      command: sh -c "sysctl -w net.ipv4.ip_forward=1 && tail -f /dev/null"  # Enable routing
+      networks:
+        transit_net_isd01:
+          ipv4_address: 10.100.0.254  # Gateway for ISD-01
+        transit_net_isd02:
+          ipv4_address: 10.200.0.254  # Gateway for ISD-02
+      cap_add:
+        - NET_ADMIN  # Required for routing
   scion01:
     image: scion01:1.0
     container_name: scion01
