@@ -10,9 +10,9 @@ build-debian-base:
 		$(DIST_TEST_DIR)
 
 build-base%: build-debian-base
-	docker build -t scion-base_ISD$*:1.0 \
-		-f ./base_ISD$*/Dockerfile \
-		./base_ISD$*
+	docker build -t scion-base_isd$*:1.0 \
+		-f ./base_isd$*/Dockerfile \
+		./base_isd$*
 
 # pattern rule for scion01…scion05
 build-scion%:
@@ -20,10 +20,9 @@ build-scion%:
 		-f ./scion$*/Dockerfile \
 		./scion$*
 
-build%: build-base01 \
+build%: build-base01 build-base02 \
        build-scion01 build-scion02 build-scion03 \
        build-scion04 build-scion05 \
-	   build-base02 \
 	   build-scion06 build-scion07 build-scion08 \
        build-scion09 build-scion10
 
