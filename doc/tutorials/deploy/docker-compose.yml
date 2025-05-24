@@ -3,24 +3,13 @@
 name: "SCION Tutorial"
 
 services:
-  # ISD router to connect the two ISD networks
-  isd-router:
-      image: alpine  # Tiny Linux distro
-      command: sh -c "sysctl -w net.ipv4.ip_forward=1 && tail -f /dev/null"  # Enable routing
-      networks:
-        transit_net_isd01:
-          ipv4_address: 10.100.0.254  # Gateway for ISD-01
-        transit_net_isd02:
-          ipv4_address: 10.200.0.254  # Gateway for ISD-02
-      cap_add:
-        - NET_ADMIN  # Required for routing
   scion01:
     image: scion01:1.0
     container_name: scion01
     hostname: scion01
     networks:
       as_net_01: {}
-      transit_net_isd01:
+      transit_net:
         ipv4_address: 10.100.0.11
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -33,7 +22,7 @@ services:
     hostname: scion02
     networks:
       as_net_02: {}
-      transit_net_isd01:
+      transit_net:
         ipv4_address: 10.100.0.12
 
     volumes:
@@ -47,7 +36,7 @@ services:
     hostname: scion03
     networks:
       as_net_03: {}
-      transit_net_isd01:
+      transit_net:
         ipv4_address: 10.100.0.13
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -60,7 +49,7 @@ services:
     hostname: scion04
     networks:
       as_net_04: {}
-      transit_net_isd01:
+      transit_net:
         ipv4_address: 10.100.0.14
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -73,7 +62,7 @@ services:
     hostname: scion05
     networks:
       as_net_05: {}
-      transit_net_isd01:
+      transit_net:
         ipv4_address: 10.100.0.15
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -86,8 +75,8 @@ services:
     hostname: scion06
     networks:
       as_net_06: {}
-      transit_net_isd02:
-        ipv4_address: 10.200.0.11
+      transit_net:
+        ipv4_address: 10.100.0.21
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
     tmpfs:
@@ -99,8 +88,8 @@ services:
     hostname: scion07
     networks:
       as_net_07: {}
-      transit_net_isd02:
-        ipv4_address: 10.200.0.12
+      transit_net:
+        ipv4_address: 10.100.0.22
 
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -113,8 +102,8 @@ services:
     hostname: scion08
     networks:
       as_net_08: {}
-      transit_net_isd02:
-        ipv4_address: 10.200.0.13
+      transit_net:
+        ipv4_address: 10.100.0.23
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
     tmpfs:
@@ -126,8 +115,8 @@ services:
     hostname: scion09
     networks:
       as_net_09: {}
-      transit_net_isd02:
-        ipv4_address: 10.200.0.14
+      transit_net:
+        ipv4_address: 10.100.0.24
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
     tmpfs:
@@ -139,8 +128,8 @@ services:
     hostname: scion10
     networks:
       as_net_10: {}
-      transit_net_isd02:
-        ipv4_address: 10.200.0.15
+      transit_net:
+        ipv4_address: 10.100.0.25
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
     tmpfs:
@@ -191,14 +180,8 @@ networks:
       config:
         - subnet: 10.20.5.0/24
   # transit_net simulates a Tier 1 network the ASes are all running within.
-  transit_net_isd01:
+  transit_net:
     driver: bridge
     ipam:
       config:
         - subnet: 10.100.0.0/24
-          # transit_net simulates a Tier 1 network the ASes are all running within.
-  transit_net_isd02:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.200.0.0/24

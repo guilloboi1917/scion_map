@@ -31,13 +31,8 @@ build: build-base01 build-base02 \
        build-scion06 build-scion07 build-scion08 \
        build-scion09 build-scion10
 
-route-isd01-%: docker exec scion$* ip route add 10.200.0.0/24 via 10.100.0.254
-route-isd02-%: docker exec scion$* ip route add 10.100.0.0/24 via 10.200.0.254
-
 up: build
 	docker compose up -d
-	route-isd01-01 route-isd01-02 route-isd01-03 route-isd01-04 route-isd01-05 \
-	route-isd02-06 route-isd02-07 route-isd02-08 route-isd02-09 route-isd02-10 \
 
 down:
 	docker compose down
