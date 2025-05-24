@@ -9,7 +9,7 @@ services:
     hostname: scion01
     networks:
       as_net_01: {}
-      transit_net:
+      transit_net_isd01:
         ipv4_address: 10.100.0.11
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -22,7 +22,7 @@ services:
     hostname: scion02
     networks:
       as_net_02: {}
-      transit_net:
+      transit_net_isd01:
         ipv4_address: 10.100.0.12
 
     volumes:
@@ -36,7 +36,7 @@ services:
     hostname: scion03
     networks:
       as_net_03: {}
-      transit_net:
+      transit_net_isd01:
         ipv4_address: 10.100.0.13
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -49,7 +49,7 @@ services:
     hostname: scion04
     networks:
       as_net_04: {}
-      transit_net:
+      transit_net_isd01:
         ipv4_address: 10.100.0.14
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -62,7 +62,7 @@ services:
     hostname: scion05
     networks:
       as_net_05: {}
-      transit_net:
+      transit_net_isd01:
         ipv4_address: 10.100.0.15
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -75,7 +75,7 @@ services:
     hostname: scion06
     networks:
       as_net_06: {}
-      transit_net:
+      transit_net_isd02:
         ipv4_address: 10.200.0.11
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -88,7 +88,7 @@ services:
     hostname: scion07
     networks:
       as_net_07: {}
-      transit_net:
+      transit_net_isd02:
         ipv4_address: 10.200.0.12
 
     volumes:
@@ -102,7 +102,7 @@ services:
     hostname: scion08
     networks:
       as_net_08: {}
-      transit_net:
+      transit_net_isd02:
         ipv4_address: 10.200.0.13
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -115,7 +115,7 @@ services:
     hostname: scion09
     networks:
       as_net_09: {}
-      transit_net:
+      transit_net_isd02:
         ipv4_address: 10.200.0.14
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
@@ -128,7 +128,7 @@ services:
     hostname: scion10
     networks:
       as_net_10: {}
-      transit_net:
+      transit_net_isd02:
         ipv4_address: 10.200.0.15
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
