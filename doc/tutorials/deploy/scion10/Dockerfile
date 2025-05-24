@@ -8,7 +8,6 @@ RUN cp /opt/tutorial-pki/AS5/*.key /etc/scion/crypto/as/ && \
 
 # Copy AS5 topology and configuration files.
 COPY topology5.json /etc/scion/topology.json
-COPY /home/shared/ /etc/scion/certs/
 
 # If any command in a pipeline fails,
 # it should still return a success status.

@@ -8,7 +8,6 @@ RUN cp /opt/tutorial-pki/AS3/*.key /etc/scion/crypto/as/ && \
 
 # Copy AS3 topology and configuration files.
 COPY topology3.json /etc/scion/topology.json
-COPY /home/shared/ /etc/scion/certs/
 
 # If any command in a pipeline fails,
 # it should still return a success status.
