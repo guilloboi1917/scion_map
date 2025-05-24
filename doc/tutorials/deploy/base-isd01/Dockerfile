@@ -45,6 +45,9 @@ RUN mkdir -p \
     /etc/scion/keys \
     /etc/scion/config
 
+# Create shared folder
+RUN mkdir -p /shared
+
 COPY br.toml /etc/scion/br.toml
 COPY cs.toml /etc/scion/cs.toml
 
