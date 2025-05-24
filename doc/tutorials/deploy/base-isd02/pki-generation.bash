@@ -65,3 +65,6 @@ scion-pki certificate create --profile=cp-as <(echo '{"isd_as": "16-ffaa:1:2", "
 scion-pki certificate create --profile=cp-as <(echo '{"isd_as": "16-ffaa:1:3", "common_name": "16-ffaa:1:3 AS cert"}') AS3/cp-as.pem AS3/cp-as.key --ca AS1/cp-ca.pem --ca-key AS1/cp-ca.key --bundle
 scion-pki certificate create --profile=cp-as <(echo '{"isd_as": "16-ffaa:1:4", "common_name": "16-ffaa:1:4 AS cert"}') AS4/cp-as.pem AS4/cp-as.key --ca AS1/cp-ca.pem --ca-key AS1/cp-ca.key --bundle
 scion-pki certificate create --profile=cp-as <(echo '{"isd_as": "16-ffaa:1:5", "common_name": "16-ffaa:1:5 AS cert"}') AS5/cp-as.pem AS5/cp-as.key --ca AS2/cp-ca.pem --ca-key AS2/cp-ca.key --bundle
+
+echo 'copying to shared folder'
+cp -r /tmp/tutorial-scion-certs /shared/
