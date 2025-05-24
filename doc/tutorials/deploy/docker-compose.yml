@@ -13,7 +13,7 @@ services:
         ipv4_address: 10.100.0.11
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -27,7 +27,7 @@ services:
         ipv4_address: 10.100.0.12
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -41,7 +41,7 @@ services:
         ipv4_address: 10.100.0.13
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -55,7 +55,7 @@ services:
         ipv4_address: 10.100.0.14
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -69,7 +69,7 @@ services:
         ipv4_address: 10.100.0.15
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -83,7 +83,7 @@ services:
         ipv4_address: 10.100.0.21
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -97,7 +97,7 @@ services:
         ipv4_address: 10.100.0.22
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -111,7 +111,7 @@ services:
         ipv4_address: 10.100.0.23
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -125,7 +125,7 @@ services:
         ipv4_address: 10.100.0.24
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
@@ -139,7 +139,7 @@ services:
         ipv4_address: 10.100.0.25
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - ./shared:/shared
+      - /home/shared:/shared
     tmpfs:
       - /run
       - /run/lock
