@@ -1,8 +1,8 @@
 FROM scion-base-isd02:1.0
 
 # Copy generated AS5 PKI from base image.
-RUN cp /opt/tutorial-pki/AS5/*.key /etc/scion/crypto/as/ && \
-    cp /opt/tutorial-pki/AS5/*.pem /etc/scion/crypto/as/ && \
+RUN cp /opt/tutorial-pki/AS10/*.key /etc/scion/crypto/as/ && \
+    cp /opt/tutorial-pki/AS10/*.pem /etc/scion/crypto/as/ && \
     chown scion:scion /etc/scion/crypto/as/*.key && \
     chmod 600 /etc/scion/crypto/as/*.key
 
