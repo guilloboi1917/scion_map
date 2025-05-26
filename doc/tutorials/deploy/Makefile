@@ -9,14 +9,13 @@ build-debian-base:
 		-f $(DIST_TEST_DIR)/Dockerfile \
 		$(DIST_TEST_DIR)
 
-build-base%: build-debian-base
-	docker build -t scion-base-isd$*:1.0 \
-		-f ./base-isd$*/Dockerfile \
-		./base-isd$*
+build-base: build-debian-base
+	docker build -t scion-base-isd:1.0 \
+		-f ./base-isd/Dockerfile \
+		./base-isd
 
 # Each scion image depends on its base image
-build-scion01 build-scion02 build-scion03 build-scion04 build-scion05: build-base01
-build-scion06 build-scion07 build-scion08 build-scion09 build-scion10: build-base02
+build-scion01 build-scion02 build-scion03 build-scion04 build-scion05 build-scion06 build-scion07 build-scion08 build-scion09 build-scion10: build-base
 
 # pattern rule for scion01…scion05
 build-scion%:
@@ -24,8 +23,8 @@ build-scion%:
 		-f ./scion$*/Dockerfile \
 		./scion$*
 
-# Main build target with proper ordering
-build: build-base01 build-base02 \
+# Main build target
+build: build-base \
        build-scion01 build-scion02 build-scion03 \
        build-scion04 build-scion05 \
        build-scion06 build-scion07 build-scion08 \

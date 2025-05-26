@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-mkdir /tmp/tutorial-scion-certs && cd /tmp/tutorial-scion-certs
+mkdir -p /tmp/tutorial-scion-certs-isd02 && cd /tmp/tutorial-scion-certs-isd02
 mkdir AS{6..10}
 
 # Create voting and root keys and (self-signed) certificates for core ASes
@@ -22,7 +22,7 @@ scion-pki certificate create --profile=regular-voting <(echo '{"isd_as": "16-ffa
 popd
 
 # Create the TRC
-mkdir tmp
+mkdir -p tmp
 cat <<EOF > trc-B1-S1-pld.tmpl
 isd = 16
 description = "Demo ISD 16"
@@ -67,4 +67,4 @@ scion-pki certificate create --profile=cp-as <(echo '{"isd_as": "16-ffaa:1:4", "
 scion-pki certificate create --profile=cp-as <(echo '{"isd_as": "16-ffaa:1:5", "common_name": "16-ffaa:1:5 AS cert"}') AS10/cp-as.pem AS10/cp-as.key --ca AS7/cp-ca.pem --ca-key AS7/cp-ca.key --bundle
 
 echo 'copying to shared folder'
-cp -r /tmp/tutorial-scion-certs /shared/
+cp -r /tmp/tutorial-scion-certs-isd02 /shared/

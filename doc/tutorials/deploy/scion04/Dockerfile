@@ -1,4 +1,4 @@
-FROM scion-base-isd01:1.0
+FROM scion-base-isd:1.0
 
 # Copy generated AS4 PKI from base image.
 RUN cp /opt/tutorial-pki/AS4/*.key /etc/scion/crypto/as/ && \

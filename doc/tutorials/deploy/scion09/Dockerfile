@@ -1,13 +1,13 @@
-FROM scion-base-isd02:1.0
+FROM scion-base-isd:1.0
 
-# Copy generated AS4 PKI from base image.
+# Copy generated AS9 PKI from base image.
 RUN cp /opt/tutorial-pki/AS9/*.key /etc/scion/crypto/as/ && \
     cp /opt/tutorial-pki/AS9/*.pem /etc/scion/crypto/as/ && \
     chown scion:scion /etc/scion/crypto/as/*.key && \
     chmod 600 /etc/scion/crypto/as/*.key
 
-# Copy AS4 topology and configuration files.
-COPY topology4.json /etc/scion/topology.json
+# Copy AS9 topology and configuration files.
+COPY topology9.json /etc/scion/topology.json
 
 # If any command in a pipeline fails,
 # it should still return a success status.

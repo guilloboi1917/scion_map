@@ -1,13 +1,13 @@
-FROM scion-base-isd02:1.0
+FROM scion-base-isd:1.0
 
-# Copy generated AS5 PKI from base image.
+# Copy generated AS10 PKI from base image.
 RUN cp /opt/tutorial-pki/AS10/*.key /etc/scion/crypto/as/ && \
     cp /opt/tutorial-pki/AS10/*.pem /etc/scion/crypto/as/ && \
     chown scion:scion /etc/scion/crypto/as/*.key && \
     chmod 600 /etc/scion/crypto/as/*.key
 
-# Copy AS5 topology and configuration files.
-COPY topology5.json /etc/scion/topology.json
+# Copy AS10 topology and configuration files.
+COPY topology10.json /etc/scion/topology.json
 
 # If any command in a pipeline fails,
 # it should still return a success status.
