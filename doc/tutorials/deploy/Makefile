@@ -14,9 +14,6 @@ build-base: build-debian-base
 		-f ./base-isd/Dockerfile \
 		./base-isd
 
-# Each scion image depends on its base image
-build-scion01 build-scion02 build-scion03 build-scion04 build-scion05 build-scion06 build-scion07 build-scion08 build-scion09 build-scion10: build-base
-
 # pattern rule for scion01…scion05
 build-scion%:
 	docker build -t scion$*:1.0 \
@@ -28,7 +25,9 @@ build: build-base \
        build-scion01 build-scion02 build-scion03 \
        build-scion04 build-scion05 \
        build-scion06 build-scion07 build-scion08 \
-       build-scion09 build-scion10
+       build-scion09 build-scion10 \
+	   build-scion11 build-scion12 build-scion13 \
+	   build-scion14 build-scion15
 
 up: build
 	docker compose up -d

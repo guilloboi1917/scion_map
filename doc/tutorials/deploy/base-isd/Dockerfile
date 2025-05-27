@@ -56,14 +56,18 @@ WORKDIR /pki
 # Setup PKI.
 COPY pki-generation-isd01.bash /pki/
 COPY pki-generation-isd02.bash /pki/
+COPY pki-generation-isd03.bash /pki/
 RUN chmod +x pki-generation-isd01.bash && ./pki-generation-isd01.bash
 RUN chmod +x pki-generation-isd02.bash && ./pki-generation-isd02.bash
+RUN chmod +x pki-generation-isd03.bash && ./pki-generation-isd03.bash
 
 # Persist the generated ISD TRC file.
 RUN ls -l /tmp/tutorial-scion-certs-isd01 && mv /tmp/tutorial-scion-certs-isd01/ISD15-B1-S1.trc /etc/scion/certs/
 RUN ls -l /tmp/tutorial-scion-certs-isd02 && mv /tmp/tutorial-scion-certs-isd02/ISD16-B1-S1.trc /etc/scion/certs/
+RUN ls -l /tmp/tutorial-scion-certs-isd03 && mv /tmp/tutorial-scion-certs-isd03/ISD17-B1-S1.trc /etc/scion/certs/
 
 # Persist the generated files.
 RUN mkdir -p /opt/tutorial-pki && \
     cp -r /tmp/tutorial-scion-certs-isd01/* /opt/tutorial-pki/ && \
-    cp -r /tmp/tutorial-scion-certs-isd02/* /opt/tutorial-pki/
+    cp -r /tmp/tutorial-scion-certs-isd02/* /opt/tutorial-pki/ && \
+    cp -r /tmp/tutorial-scion-certs-isd03/* /opt/tutorial-pki/
