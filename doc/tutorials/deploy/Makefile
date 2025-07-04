@@ -20,6 +20,11 @@ build-scion%:
 		-f ./scion$*/Dockerfile \
 		./scion$*
 
+build-monitor:
+	docker build -t monitor:1.0 \
+	-f ./monitor/Dockerfile \
+	./monitor
+
 # Main build target
 build: build-base \
        build-scion01 build-scion02 build-scion03 \
@@ -27,7 +32,8 @@ build: build-base \
        build-scion06 build-scion07 build-scion08 \
        build-scion09 build-scion10 \
 	   build-scion11 build-scion12 build-scion13 \
-	   build-scion14 build-scion15
+	   build-scion14 build-scion15 \
+	   build-monitor
 
 up: build
 	docker compose up -d

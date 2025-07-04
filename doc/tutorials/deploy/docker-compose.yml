@@ -18,8 +18,7 @@ services:
     network_mode: "service:switch"
     volumes:
       - ./captures:/data
-    #command: sleep infinity  # Keep container running but idle
-    command: tshark -i eth0 -w /data/capture.pcap
+    command: sleep infinity  # Keep idle
 
 
   scion01:
