@@ -1,8 +1,7 @@
 FROM alpine:latest
 
 # Install dependencies.
-RUN apt-get update && apt-get install -y --no-install-recommends wireshark && \
-    rm -rf /tmp/scion /var/lib/apt/lists/*
+RUN apk add --no-cache tshark
 
-# Default command (override in compose)
-CMD ["tshark", "--help"]  
+# Default command, override in compose
+CMD ["tshark", "-i", "eth0", "-w", "/data/capture.pcap"]

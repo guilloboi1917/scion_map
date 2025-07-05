@@ -4,31 +4,33 @@ name: "SCION Tutorial"
 
 services:
   # Central switch
-  switch:
-    image: alpine:latest
-    command: tail -f /dev/null
-    networks:
-      transit_net:
-    cap_add:
-      - NET_ADMIN # required for traffic inspection
+  # switch:
+  #   image: alpine:latest
+  #   command: tail -f /dev/null
+  #   networks:
+  #     transit_net:
+  #   cap_add:
+  #     - NET_ADMIN # required for traffic inspection
 
-  # Monitoring container
-  monitor:
-    image: wireshark:latest
-    network_mode: "service:switch"
-    volumes:
-      - ./captures:/data
-    command: sleep infinity  # Keep idle
-
-
+  # # Monitoring container
+  # monitor:
+  #   image: monitor:1.0
+  #   container_name: monitor
+  #   network_mode: "service:switch"
+  #   cap_add:
+  #   - NET_ADMIN  # Required for network interface access
+  #   - NET_RAW    # Required for packet capture
+  #   volumes:
+  #     - ./captures:/data
+  #   command: sleep infinity
   scion01:
     image: scion01:1.0
     container_name: scion01
     hostname: scion01
     networks:
-      as_net_01: {}
       transit_net:
         ipv4_address: 10.100.0.11
+      as_net_01: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -40,9 +42,9 @@ services:
     container_name: scion02
     hostname: scion02
     networks:
-      as_net_02: {}
       transit_net:
         ipv4_address: 10.100.0.12
+      as_net_02: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -54,9 +56,9 @@ services:
     container_name: scion03
     hostname: scion03
     networks:
-      as_net_03: {}
       transit_net:
         ipv4_address: 10.100.0.13
+      as_net_03: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -68,9 +70,9 @@ services:
     container_name: scion04
     hostname: scion04
     networks:
-      as_net_04: {}
       transit_net:
         ipv4_address: 10.100.0.14
+      as_net_04: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -82,9 +84,9 @@ services:
     container_name: scion05
     hostname: scion05
     networks:
-      as_net_05: {}
       transit_net:
         ipv4_address: 10.100.0.15
+      as_net_05: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -96,9 +98,9 @@ services:
     container_name: scion06
     hostname: scion06
     networks:
-      as_net_06: {}
       transit_net:
         ipv4_address: 10.100.0.21
+      as_net_06: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -110,9 +112,9 @@ services:
     container_name: scion07
     hostname: scion07
     networks:
-      as_net_07: {}
       transit_net:
         ipv4_address: 10.100.0.22
+      as_net_07: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -124,9 +126,9 @@ services:
     container_name: scion08
     hostname: scion08
     networks:
-      as_net_08: {}
       transit_net:
         ipv4_address: 10.100.0.23
+      as_net_08: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -138,9 +140,9 @@ services:
     container_name: scion09
     hostname: scion09
     networks:
-      as_net_09: {}
       transit_net:
         ipv4_address: 10.100.0.24
+      as_net_09: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -152,9 +154,9 @@ services:
     container_name: scion10
     hostname: scion10
     networks:
-      as_net_10: {}
       transit_net:
         ipv4_address: 10.100.0.25
+      as_net_10: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -166,9 +168,9 @@ services:
     container_name: scion11
     hostname: scion11
     networks:
-      as_net_11: {}
       transit_net:
         ipv4_address: 10.100.0.31
+      as_net_11: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -180,9 +182,9 @@ services:
     container_name: scion12
     hostname: scion12
     networks:
-      as_net_12: {}
       transit_net:
         ipv4_address: 10.100.0.32
+      as_net_12: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -194,9 +196,9 @@ services:
     container_name: scion13
     hostname: scion13
     networks:
-      as_net_13: {}
       transit_net:
         ipv4_address: 10.100.0.33
+      as_net_13: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -208,9 +210,9 @@ services:
     container_name: scion14
     hostname: scion14
     networks:
-      as_net_14: {}
       transit_net:
         ipv4_address: 10.100.0.34
+      as_net_14: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -222,9 +224,9 @@ services:
     container_name: scion15
     hostname: scion15
     networks:
-      as_net_15: {}
       transit_net:
         ipv4_address: 10.100.0.35
+      as_net_15: {}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /home/shared:/shared
@@ -301,3 +303,7 @@ networks:
     ipam:
       config:
         - subnet: 10.100.0.0/24
+    # Not sure if these work as intended, having to test it
+    driver_opts:
+      com.docker.network.bridge.promisc: "true"  # Allow monitoring all traffic
+      com.docker.network.bridge.enable_icc: "true"  # Enable inter-container communication

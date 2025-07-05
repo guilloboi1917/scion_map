@@ -14,9 +14,9 @@ ENV container=docker
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-# Install dependencies.
+# Install dependencies and additional network utilities.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    systemd libcap2-bin \
+    systemd libcap2-bin tcpdump iputils-ping \
     curl wget tar ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
