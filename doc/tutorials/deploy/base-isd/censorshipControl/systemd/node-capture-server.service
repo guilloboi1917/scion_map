@@ -1,0 +1,15 @@
+[Unit]
+Description=Node Capture HTTP API
+After=network.target node-capture.service
+Requires=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/node-capture-server
+Restart=always
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

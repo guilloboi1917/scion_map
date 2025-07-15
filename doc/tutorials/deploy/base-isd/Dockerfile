@@ -14,6 +14,9 @@ ENV container=docker
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
+# Get nice colours
+RUN echo "PS1='\e[92m\u\e[0m@\e[94m\h\e[0m:\e[35m\w\e[0m# '" >> ~/.bashrc
+
 # Install dependencies and additional network utilities.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd libcap2-bin tcpdump iputils-ping \
@@ -28,6 +31,23 @@ RUN mkdir -p /tmp/scion/ && \
     ls -l /tmp/scion/ && \
     apt-get install -y --no-install-recommends $(find /tmp/scion -name '*.deb') && \
     rm -rf /tmp/scion /var/lib/apt/lists/*
+
+# Copy go application files
+COPY /censorshipControl/monitor-cli         /usr/local/bin/
+COPY /censorshipControl/node-capture        /usr/local/bin/
+COPY /censorshipControl/node-capture-server /usr/local/bin/
+
+# Change permissions
+RUN chmod +x /usr/local/bin/monitor-cli
+RUN chmod +x /usr/local/bin/node-capture
+RUN chmod +x /usr/local/bin/node-capture-server
+
+# Copy systemd unit files for node-capture and server
+COPY /censorshipControl/systemd /etc/systemd/system
+
+RUN mkdir -p /data
+
+RUN systemctl enable node-capture-server.service
 
 # Copy systemd unit files
 COPY systemd/ /etc/systemd/system/

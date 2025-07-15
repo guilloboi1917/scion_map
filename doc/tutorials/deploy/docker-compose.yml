@@ -1,6 +1,6 @@
 # This docker compose file defines the setup described in
 # https://docs.scion.org/en/latest/tutorials/deploy.html
-name: "SCION Tutorial"
+name: "SCION Censorship Testbed"
 
 services:
   # Central switch
