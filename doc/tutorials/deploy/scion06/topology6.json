@@ -52,6 +52,15 @@
                     "isd_as": "15-ffaa:1:1",
                     "link_to": "core",
                     "mtu": 1472
+                },
+                "5": {
+                    "underlay": {
+                        "local": "10.100.0.21:50016",
+                        "remote": "10.100.0.41:50016"
+                    },
+                    "isd_as": "18-ffaa:1:1",
+                    "link_to": "core",
+                    "mtu": 1472
                 }
             }
         }
