@@ -34,6 +34,8 @@ build: build-base \
        build-scion09 build-scion10 \
 	   build-scion11 build-scion12 build-scion13 \
 	   build-scion14 build-scion15 \
+	   build-scion16 build-scion17 build-scion18 \
+	   build-scion19 build-scion20 \
 
 up: build
 	docker compose up -d
