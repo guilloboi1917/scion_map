@@ -14,7 +14,7 @@ services:
 
   # Monitoring container
   monitor:
-    image: tshark:latest
+    image: sflow/tshark:latest
     network_mode: "service:switch"
     volumes:
       - ./captures:/data
