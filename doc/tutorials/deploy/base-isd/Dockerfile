@@ -14,9 +14,12 @@ ENV container=docker
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-# Install dependencies.
+# Get nice colours
+RUN echo "PS1='\e[92m\u\e[0m@\e[94m\h\e[0m:\e[35m\w\e[0m# '" >> ~/.bashrc
+
+# Install dependencies and additional network utilities.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    systemd libcap2-bin \
+    systemd libcap2-bin tcpdump iputils-ping \
     curl wget tar ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,6 +31,23 @@ RUN mkdir -p /tmp/scion/ && \
     ls -l /tmp/scion/ && \
     apt-get install -y --no-install-recommends $(find /tmp/scion -name '*.deb') && \
     rm -rf /tmp/scion /var/lib/apt/lists/*
+
+# Copy go application files
+COPY /censorshipControl/monitor-cli         /usr/local/bin/
+COPY /censorshipControl/node-capture        /usr/local/bin/
+COPY /censorshipControl/node-capture-server /usr/local/bin/
+
+# Change permissions
+RUN chmod +x /usr/local/bin/monitor-cli
+RUN chmod +x /usr/local/bin/node-capture
+RUN chmod +x /usr/local/bin/node-capture-server
+
+# Copy systemd unit files for node-capture and server
+COPY /censorshipControl/systemd /etc/systemd/system
+
+RUN mkdir -p /data
+
+RUN systemctl enable node-capture-server.service
 
 # Copy systemd unit files
 COPY systemd/ /etc/systemd/system/
@@ -57,17 +77,21 @@ WORKDIR /pki
 COPY pki-generation-isd01.bash /pki/
 COPY pki-generation-isd02.bash /pki/
 COPY pki-generation-isd03.bash /pki/
+COPY pki-generation-isd04.bash /pki/
 RUN chmod +x pki-generation-isd01.bash && ./pki-generation-isd01.bash
 RUN chmod +x pki-generation-isd02.bash && ./pki-generation-isd02.bash
 RUN chmod +x pki-generation-isd03.bash && ./pki-generation-isd03.bash
+RUN chmod +x pki-generation-isd04.bash && ./pki-generation-isd04.bash
 
 # Persist the generated ISD TRC file.
 RUN ls -l /tmp/tutorial-scion-certs-isd01 && mv /tmp/tutorial-scion-certs-isd01/ISD15-B1-S1.trc /etc/scion/certs/
 RUN ls -l /tmp/tutorial-scion-certs-isd02 && mv /tmp/tutorial-scion-certs-isd02/ISD16-B1-S1.trc /etc/scion/certs/
 RUN ls -l /tmp/tutorial-scion-certs-isd03 && mv /tmp/tutorial-scion-certs-isd03/ISD17-B1-S1.trc /etc/scion/certs/
+RUN ls -l /tmp/tutorial-scion-certs-isd04 && mv /tmp/tutorial-scion-certs-isd04/ISD18-B1-S1.trc /etc/scion/certs/
 
 # Persist the generated files.
 RUN mkdir -p /opt/tutorial-pki && \
     cp -r /tmp/tutorial-scion-certs-isd01/* /opt/tutorial-pki/ && \
     cp -r /tmp/tutorial-scion-certs-isd02/* /opt/tutorial-pki/ && \
-    cp -r /tmp/tutorial-scion-certs-isd03/* /opt/tutorial-pki/
+    cp -r /tmp/tutorial-scion-certs-isd03/* /opt/tutorial-pki/ && \
+    cp -r /tmp/tutorial-scion-certs-isd04/* /opt/tutorial-pki/

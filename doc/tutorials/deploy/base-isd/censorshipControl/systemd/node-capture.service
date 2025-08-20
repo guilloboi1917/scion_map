@@ -1,0 +1,18 @@
+[Unit]
+Description=Packet Capture Service
+After=network.target
+Requires=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/node-capture -start
+ExecStop=/usr/local/bin/node-capture -stop
+Restart=on-failure
+RestartSec=5s
+RemainAfterExit=yes  # Track "active" state after exit
+StandardOutput=journal
+StandardError=journal
+
+
+[Install]
+WantedBy=multi-user.target

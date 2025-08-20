@@ -14,7 +14,7 @@ services:
 
   # Monitoring container
   monitor:
-    image: tshark:latest
+    image: sflow/tshark:latest
     network_mode: "service:switch"
     volumes:
       - ./captures:/data
@@ -232,6 +232,76 @@ services:
     tmpfs:
       - /run
       - /run/lock
+  scion16:
+    image: scion16:1.0
+    container_name: scion16
+    hostname: scion16
+    networks:
+      as_net_16: {}
+      transit_net:
+        ipv4_address: 10.100.0.41
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /home/shared:/shared
+    tmpfs:
+      - /run
+      - /run/lock
+  scion17:
+    image: scion17:1.0
+    container_name: scion17
+    hostname: scion17
+    networks:
+      as_net_17: {}
+      transit_net:
+        ipv4_address: 10.100.0.42
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /home/shared:/shared
+    tmpfs:
+      - /run
+      - /run/lock
+  scion18:
+    image: scion18:1.0
+    container_name: scion18
+    hostname: scion18
+    networks:
+      as_net_18: {}
+      transit_net:
+        ipv4_address: 10.100.0.43
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /home/shared:/shared
+    tmpfs:
+      - /run
+      - /run/lock
+  scion19:
+    image: scion19:1.0
+    container_name: scion19
+    hostname: scion19
+    networks:
+      as_net_19: {}
+      transit_net:
+        ipv4_address: 10.100.0.44
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /home/shared:/shared
+    tmpfs:
+      - /run
+      - /run/lock
+  scion20:
+    image: scion20:1.0
+    container_name: scion20
+    hostname: scion20
+    networks:
+      as_net_20: {}
+      transit_net:
+        ipv4_address: 10.100.0.45
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /home/shared:/shared
+    tmpfs:
+      - /run
+      - /run/lock
 networks:
 # ISD 01
   as_net_01:
@@ -296,6 +366,27 @@ networks:
     ipam:
       config:
         - subnet: 10.30.5.0/24
+  # ISD 04
+  as_net_16:
+    ipam:
+      config:
+        - subnet: 10.40.1.0/24
+  as_net_17:
+    ipam:
+      config:
+        - subnet: 10.40.2.0/24
+  as_net_18:
+    ipam:
+      config:
+        - subnet: 10.40.3.0/24
+  as_net_19:
+    ipam:
+      config:
+        - subnet: 10.40.4.0/24
+  as_net_20:
+    ipam:
+      config:
+        - subnet: 10.40.5.0/24
   # transit_net simulates a Tier 1 network the ASes are all running within.
   transit_net:
     driver: bridge
