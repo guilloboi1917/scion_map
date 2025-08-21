@@ -1,7 +1,29 @@
-FROM alpine:latest
+# syntax = docker/dockerfile:1.3
+FROM --platform=$BUILDPLATFORM debian:12-slim
 
-# Install dependencies.
-RUN apk add --no-cache tshark
+ARG TARGETARCH
 
-# Default command, override in compose
-CMD ["tshark", "-i", "eth0", "-w", "/data/capture.pcap"]
+# Tell systemd it's running inside Docker. Without this, systemd may emit warnings
+# and fail to boot certain units (especially networking-related).
+ENV container=docker
+
+# Force debconf (called by apt-get) to be non-interactive.
+# This prevents interactive prompts during package installation.
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+# Get nice colours
+RUN echo "PS1='\e[92m\u\e[0m@\e[94m\h\e[0m:\e[35m\w\e[0m# '" >> ~/.bashrc
+
+# Install dependencies and additional network utilities.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    systemd libcap2-bin tcpdump iputils-ping \
+    curl wget tar ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# If any command in a pipeline fails,
+# it should still return a success status.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Keep running
+CMD ["tail", "-f", "/dev/null"]

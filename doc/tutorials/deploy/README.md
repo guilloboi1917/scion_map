@@ -39,3 +39,10 @@ make down
 - Extend to 4 ISD setup (new pki-generation file, new services/Dockerfile/Topology files, etc.)
 - Maybe clean up and reformat, new folder structure etc.
 - ?
+
+To build the gofiles for the docker containers use:
+
+```bash
+env GOOS=linux GOARCH=amd64 go build -o <outputFileName> <goFile>
+```
+

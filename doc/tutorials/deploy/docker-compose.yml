@@ -3,24 +3,16 @@
 name: "SCION Tutorial"
 
 services:
-  # Central switch
-  switch:
-    image: alpine:latest
-    command: tail -f /dev/null
-    networks:
-      transit_net:
-    cap_add:
-      - NET_ADMIN # required for traffic inspection
-
   # Monitoring container
   monitor:
-    image: sflow/tshark:latest
-    network_mode: "service:switch"
+    image: monitor:1.0
+    container_name: monitor
+    hostname: monitor
+    networks:
+      transit_net:
+        ipv4_address: 10.100.0.100
     volumes:
       - ./captures:/data
-    #command: sleep infinity  # Keep container running but idle
-    command: tshark -i eth0 -w /data/capture.pcap
-
 
   scion01:
     image: scion01:1.0

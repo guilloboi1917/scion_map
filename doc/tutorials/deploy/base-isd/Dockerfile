@@ -33,21 +33,17 @@ RUN mkdir -p /tmp/scion/ && \
     rm -rf /tmp/scion /var/lib/apt/lists/*
 
 # Copy go application files
-COPY /censorshipControl/monitor-cli         /usr/local/bin/
-COPY /censorshipControl/node-capture        /usr/local/bin/
-COPY /censorshipControl/node-capture-server /usr/local/bin/
+COPY /censorshipControl/scion-api-server        /usr/local/bin/
 
 # Change permissions
-RUN chmod +x /usr/local/bin/monitor-cli
-RUN chmod +x /usr/local/bin/node-capture
-RUN chmod +x /usr/local/bin/node-capture-server
+RUN chmod +x /usr/local/bin/scion-api-server
 
 # Copy systemd unit files for node-capture and server
 COPY /censorshipControl/systemd /etc/systemd/system
 
 RUN mkdir -p /data
 
-RUN systemctl enable node-capture-server.service
+RUN systemctl enable scion-api-server.service
 
 # Copy systemd unit files
 COPY systemd/ /etc/systemd/system/

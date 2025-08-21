@@ -1,11 +1,11 @@
-package main
+package deprecated
 
 import (
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
-	"io"
 )
 
 func main() {
