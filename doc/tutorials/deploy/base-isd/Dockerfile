@@ -41,7 +41,7 @@ RUN chmod +x /usr/local/bin/scion-api-server
 # Copy systemd unit files for node-capture and server
 COPY /censorshipControl/systemd /etc/systemd/system
 
-RUN mkdir -p /data
+RUN mkdir -p /data/capture
 
 RUN systemctl enable scion-api-server.service
 
