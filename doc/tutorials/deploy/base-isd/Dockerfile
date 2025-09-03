@@ -20,7 +20,7 @@ RUN echo "PS1='\e[92m\u\e[0m@\e[94m\h\e[0m:\e[35m\w\e[0m# '" >> ~/.bashrc
 # Install dependencies and additional network utilities.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd libcap2-bin tcpdump iputils-ping \
-    curl wget tar ca-certificates \
+    curl wget tar ca-certificates nano \
     && rm -rf /var/lib/apt/lists/*
 
 # Install SCION packages. Eventually, also remove the apt cache files
@@ -91,3 +91,6 @@ RUN mkdir -p /opt/tutorial-pki && \
     cp -r /tmp/tutorial-scion-certs-isd02/* /opt/tutorial-pki/ && \
     cp -r /tmp/tutorial-scion-certs-isd03/* /opt/tutorial-pki/ && \
     cp -r /tmp/tutorial-scion-certs-isd04/* /opt/tutorial-pki/
+
+# Copy base path policy file
+COPY default-policy.yaml /etc/scion/default-policy.yaml

@@ -22,7 +22,7 @@
         "1": {
           "underlay": {
             "local": "10.100.0.13:50013",
-            "remote": "scion01:50013"
+            "remote": "10.100.0.11:50013"
           },
           "isd_as": "15-ffaa:1:1",
           "link_to": "core",
