@@ -27,7 +27,7 @@ build-monitor:
 	./monitor
 
 # Main build target
-build: build-base \
+build: build-base build-monitor \
        build-scion01 build-scion02 build-scion03 \
        build-scion04 build-scion05 \
        build-scion06 build-scion07 build-scion08 \
