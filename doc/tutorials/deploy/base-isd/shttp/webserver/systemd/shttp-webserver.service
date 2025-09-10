@@ -1,12 +1,13 @@
 [Unit]
-Description=SCION API Server
+Description=SCION shttp Webserver
+Documentation=https://github.com/netsec-ethz/scion-apps/blob/master/_examples/shttp/README.md
 After=network-online.target
 StartLimitBurst=1
 StartLimitIntervalSec=1s
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/scion-api-server
+ExecStart=/usr/local/bin/shttp-webserver
 Restart=on-failure
 RestartSec=5s
 RemainAfterExit=yes  # Track "active" state after exit
