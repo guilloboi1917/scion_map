@@ -21,6 +21,8 @@ RUN echo "PS1='\e[92m\u\e[0m@\e[94m\h\e[0m:\e[35m\w\e[0m# '" >> ~/.bashrc
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd libcap2-bin tcpdump iputils-ping \
     curl wget tar ca-certificates \
+    # For development, can delete later
+    nano procps \
     apt-transport-https 
 
 # Required for scion-apps-bat
@@ -28,7 +30,7 @@ RUN echo "deb [trusted=yes] https://packages.netsec.inf.ethz.ch/debian all main"
 
 # Install dependencies and additional network utilities.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    scion-apps-bat \
+    scion-apps-bat scion-apps-netcat \
     && rm -rf /var/lib/apt/lists/* 
 
 # Install SCION packages. Eventually, also remove the apt cache files

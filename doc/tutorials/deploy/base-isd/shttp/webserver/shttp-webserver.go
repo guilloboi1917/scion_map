@@ -93,11 +93,11 @@ func main() {
 
 	handler := handlers.LoggingHandler(os.Stdout, m)
 	if *certFile != "" && *keyFile != "" {
-		go func() { log.Fatal(shttp.ListenAndServeTLS(":443", *certFile, *keyFile, handler)) }()
-		log.Println("shttps Webserver running on :443")
+		go func() { log.Fatal(shttp.ListenAndServeTLS(":30766", *certFile, *keyFile, handler)) }()
+		log.Println("shttps Webserver running on :30766")
 	}
-	log.Println("shttp Webserver running on :80")
-	if err := shttp.ListenAndServe(":80", handler); err != nil {
+	if err := shttp.ListenAndServe(":30765", handler); err != nil {
 		log.Fatalf("HTTP server error: %v\n", err)
+		log.Println("shttp Webserver running on :30765")
 	}
 }
