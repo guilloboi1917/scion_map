@@ -93,9 +93,8 @@ func main() {
 
 	handler := handlers.LoggingHandler(os.Stdout, m)
 	if *certFile != "" && *keyFile != "" {
-		go func() { log.Fatal(shttp.ListenAndServeTLS(":443", *certFile, *keyFile, handler))
+		go func() { log.Fatal(shttp.ListenAndServeTLS(":443", *certFile, *keyFile, handler)) }()
 		log.Println("shttps Webserver running on :443")
-		 }()
 	}
 	log.Println("shttp Webserver running on :80")
 	log.Fatal(shttp.ListenAndServe(":80", handler))
