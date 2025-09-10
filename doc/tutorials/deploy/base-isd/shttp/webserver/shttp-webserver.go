@@ -97,5 +97,7 @@ func main() {
 		log.Println("shttps Webserver running on :443")
 	}
 	log.Println("shttp Webserver running on :80")
-	log.Fatal(shttp.ListenAndServe(":80", handler))
+	if err := shttp.ListenAndServe(":80", handler); err != nil {
+		log.Fatalf("HTTP server error: %v\n", err)
+	}
 }
