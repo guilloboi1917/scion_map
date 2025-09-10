@@ -1,16 +1,19 @@
 [Unit]
 Description=SCION shttp Webserver
 Documentation=https://github.com/netsec-ethz/scion-apps/blob/master/_examples/shttp/README.md
-After=network-online.target
+After=network-online.target scion-daemon.Service
+Requires=scion-daemon.service
 StartLimitBurst=1
 StartLimitIntervalSec=1s
 
 [Service]
 Type=oneshot
+User=scion
+Group=scion
 ExecStart=/usr/local/bin/shttp-webserver
 Restart=on-failure
 RestartSec=5s
-RemainAfterExit=yes  # Track "active" state after exit
+RemainAfterExit=true
 StandardOutput=journal
 StandardError=journal
 

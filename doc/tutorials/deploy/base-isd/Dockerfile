@@ -17,18 +17,18 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 # Get nice colours
 RUN echo "PS1='\e[92m\u\e[0m@\e[94m\h\e[0m:\e[35m\w\e[0m# '" >> ~/.bashrc
 
-# Required for scion-apps-bat
-RUN echo "deb [trusted=yes] https://packages.netsec.inf.ethz.ch/debian all main" | sudo tee /etc/apt/sources.list.d/scionlab.list
-
-# We also install the shttp server example
-# https://github.com/netsec-ethz/scion-apps/tree/master/_examples/shttp
-
-
 # Install dependencies and additional network utilities.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd libcap2-bin tcpdump iputils-ping \
     curl wget tar ca-certificates \
-    apt-transport-https scion-apps-bat \
+    apt-transport-https 
+
+# Required for scion-apps-bat
+RUN echo "deb [trusted=yes] https://packages.netsec.inf.ethz.ch/debian all main" | tee /etc/apt/sources.list.d/scionlab.list
+
+# Install dependencies and additional network utilities.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    scion-apps-bat \
     && rm -rf /var/lib/apt/lists/* 
 
 # Install SCION packages. Eventually, also remove the apt cache files
@@ -37,7 +37,7 @@ RUN mkdir -p /tmp/scion/ && \
     wget --progress=dot:giga "$RELEASE" -O /tmp/scion/pkgs.tar.gz && \
     tar -xzf /tmp/scion/pkgs.tar.gz -C /tmp/scion/ && \
     ls -l /tmp/scion/ && \
-    apt-get install -y --no-install-recommends $(find /tmp/scion -name '*.deb') && \
+    apt-get install -y --allow-downgrades --no-install-recommends $(find /tmp/scion -name '*.deb') && \
     rm -rf /tmp/scion /var/lib/apt/lists/*
 
 # Copy go application files
@@ -53,6 +53,8 @@ RUN mkdir -p /data/capture
 
 RUN systemctl enable scion-api-server.service
 
+# We also install the shttp server example
+# https://github.com/netsec-ethz/scion-apps/tree/master/_examples/shttp
 # Add shttp-webserver and systemd files
 COPY /shttp/webserver/shttp-webserver /usr/local/bin/
 RUN chmod +x /usr/local/bin/shttp-webserver

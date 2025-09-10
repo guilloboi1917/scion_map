@@ -12,6 +12,10 @@
 // POST   /config/scion       	# {file: "topology.json", content: "{...}"}
 // GET    /config/scion/{file}	# Read config file
 // POST   /config/firewall    	# {rules: ["allow scion", "drop other"]}
+// POST		/config/scion/path-policy	# {type: propagation | core_registration | up_registration | down_registration | all, file: "updatedPathPolicy.yaml"}
+// GET		/config/scion/path-policy	# {returns path-policy files}
+// POST		/config/scion/topology	# {file: "updatedTopology.json"}
+// GET		/config/scion/topology	# returns topology file
 
 // Packet Dispatch Endpoints
 // POST		/dispatch/ping/start			# {dst: "10.100.0.11", count: "5"}
@@ -303,6 +307,21 @@ func stopPing(w http.ResponseWriter, r *http.Request) {
 func startScionPing(w http.ResponseWriter, r *http.Request) {
 	return
 }
+
+func modifyPathPolicyConfig(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
+func modifyTopologyConfig(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
+func restartScionServices(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
+
+
 
 func main() {
 	// Initialize the capture state
