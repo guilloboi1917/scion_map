@@ -21,3 +21,7 @@ propagation = "/etc/scion/default-policy.yaml"
 core_registration = "/etc/scion/default-policy.yaml"
 up_registration = "/etc/scion/default-policy.yaml"
 down_registration = "/etc/scion/default-policy.yaml"
+
+#RestApi
+[api]
+addr = "127.0.0.1:30454"
