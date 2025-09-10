@@ -1,7 +1,7 @@
 [Unit]
 Description=SCION shttp Webserver
 Documentation=https://github.com/netsec-ethz/scion-apps/blob/master/_examples/shttp/README.md
-After=network-online.target scion-daemon.Service
+After=network-online.target scion-daemon.service
 Requires=scion-daemon.service
 StartLimitBurst=1
 StartLimitIntervalSec=1s
@@ -10,6 +10,7 @@ StartLimitIntervalSec=1s
 Type=oneshot
 User=scion
 Group=scion
+ExecStartPre=/bin/sleep 5
 ExecStart=/usr/local/bin/shttp-webserver
 Restart=on-failure
 RestartSec=5s
