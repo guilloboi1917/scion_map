@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCION Configuration Manager</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .server-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .btn {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .status-online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SCION Network Configuration</h1>
+        
+        <!-- Server Selection -->
+        <div>
+            <h2>Select Backend Server</h2>
+            <select id="serverSelect" name="server" 
+                    hx-get="/scion/dispatcher" 
+                    hx-target="#dispatcherStatus"
+                    hx-trigger="change"
+                    hx-include="[name='server']">
+                <option value="">Select a server...</option>
+                <!-- Generate server options for 10.100.0.0/24 range -->
+                <script>
+                    for (let i = 1; i <= 254; i++) {
+                        document.write(`<option value="10.100.0.${i}">10.100.0.${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+
+        <!-- Dispatcher Status -->
+        <div id="dispatcherStatus" class="server-card">
+            <h3>Dispatcher Status</h3>
+            <p>Select a server to check status</p>
+        </div>
+
+        <!-- Configuration Section -->
+        <div id="configSection" style="display: none;">
+            <h2>Configuration Management</h2>
+            
+            <!-- Current Configuration -->
+            <div id="currentConfig" class="server-card">
+                <h3>Current Configuration</h3>
+                <p>Loading configuration...</p>
+            </div>
+
+            <!-- Update Configuration Form -->
+            <div class="server-card">
+                <h3>Update Configuration</h3>
+                <form id="configForm"
+                      hx-post="/scion/configure"
+                      hx-target="#configResult"
+                      hx-swap="innerHTML">
+                    <input type="hidden" name="server" id="configServer">
+                    
+                    <div>
+                        <label for="configData">Configuration JSON:</label>
+                        <textarea id="configData" name="config" rows="6" cols="50" 
+                                  placeholder='{"key": "value"}'></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Apply Configuration</button>
+                </form>
+                
+                <div id="configResult"></div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div>
+            <h2>Quick Actions</h2>
+            <button class="btn btn-secondary"
+                    hx-post="/scion/dispatcher"
+                    hx-target="#quickActionResult"
+                    hx-include="#serverSelect"
+                    hx-vals='{"action": "restart"}'>
+                Restart Dispatcher
+            </button>
+            
+            <button class="btn btn-secondary"
+                    hx-post="/scion/dispatcher"
+                    hx-target="#quickActionResult"
+                    hx-include="#serverSelect"
+                    hx-vals='{"action": "status"}'>
+                Check Status
+            </button>
+            
+            <div id="quickActionResult" class="server-card"></div>
+        </div>
+    </div>
+
+    <script>
+        // Update hidden server field when server selection changes
+        document.getElementById('serverSelect').addEventListener('change', function(e) {
+            const selectedServer = e.target.value;
+            document.getElementById('configServer').value = selectedServer;
+            
+            // Show/hide config section based on server selection
+            const configSection = document.getElementById('configSection');
+            configSection.style.display = selectedServer ? 'block' : 'none';
+            
+            // Load current configuration when server is selected
+            if (selectedServer) {
+                htmx.ajax('GET', '/scion/configure?server=' + selectedServer, {
+                    target: '#currentConfig',
+                    swap: 'innerHTML'
+                });
+            }
+        });
+
+        // Add loading indicators
+        document.body.addEventListener('htmx:beforeRequest', function(e) {
+            e.detail.target.classList.add('loading');
+        });
+
+        document.body.addEventListener('htmx:afterRequest', function(e) {
+            e.detail.target.classList.remove('loading');
+        });
+
+        // Error handling
+        document.body.addEventListener('htmx:responseError', function(e) {
+            const target = e.detail.target;
+            target.innerHTML = `
+                <div class="status status-offline">
+                    Error: ${e.detail.xhr.status} - ${e.detail.xhr.statusText}
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

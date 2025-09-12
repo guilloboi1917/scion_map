@@ -55,6 +55,12 @@ RUN mkdir -p /data/capture
 
 RUN systemctl enable scion-api-server.service
 
+# Create directories to store data from scion-api-server
+RUN mkdir -p /var/lib/scion-api-server/ping-results \
+    /var/lib/scion-api-server/scion-ping-results \
+    /var/lib/scion-api-server/packet-captures
+    
+
 # We also install the shttp server example
 # https://github.com/netsec-ethz/scion-apps/tree/master/_examples/shttp
 # Add shttp-webserver and systemd files
@@ -109,3 +115,5 @@ RUN mkdir -p /opt/tutorial-pki && \
     cp -r /tmp/tutorial-scion-certs-isd02/* /opt/tutorial-pki/ && \
     cp -r /tmp/tutorial-scion-certs-isd03/* /opt/tutorial-pki/ && \
     cp -r /tmp/tutorial-scion-certs-isd04/* /opt/tutorial-pki/
+
+RUN cd /etc/scion/
