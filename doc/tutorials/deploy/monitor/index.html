@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCION Configuration Manager</title>
-    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -200,9 +199,9 @@
         <h1>SCION Network Configuration</h1>
 
         <div class="tab-container">
-            <div class="tab active" onclick="switchTab('server-tab')">Server Status</div>
-            <div class="tab" onclick="switchTab('config-tab')">Configuration</div>
-            <div class="tab" onclick="switchTab('actions-tab')">Quick Actions</div>
+            <div class="tab active" onclick="switchTab('server-tab', event)">Server Status</div>
+            <div class="tab" onclick="switchTab('config-tab', event)">Configuration</div>
+            <div class="tab" onclick="switchTab('actions-tab', event)">Quick Actions</div>
         </div>
 
         <!-- Server Selection -->
@@ -210,49 +209,35 @@
             <h2>Select SCION Node</h2>
             <select id="serverSelect" name="server">
                 <option value="">Select a SCION AS node...</option>
-                <!-- Generate server options for all scion nodes 10.100.0.<ISD#LocalAS#> -->
-                <script>
-                    for (let i = 1; i <= 4; i++) {
-                        for (let j = 1; j <= 5; j++) {
-                            document.write(`<option value="10.100.0.${i}${j}">scion${(i - 1) * 5 + j} : 10.100.0.${i}${j}</option>`);
-                        }
-                    }
-                </script>
             </select>
-
             <div class="url-display" id="serverUrlDisplay">No server selected</div>
         </div>
 
         <!-- Server Status Tab -->
         <div id="server-tab" class="tab-content active">
-            <h2>Server Status</h2>
+            <h2>Service Status</h2>
 
-            <button class="btn btn-primary" hx-get="/proxy" hx-target="#serverStatus"
-                hx-vals='js:{target: document.getElementById("serverSelect").value + ":30442", endpoint: "/api/v1/health"}'
-                hx-trigger="click" onclick="updateUrlDisplay(this)">
-                Check Server Status
-            </button>
+            <select id="serviceSelect" name="service">
+                <option value="">Select a service</option>
 
-            <div class="url-display">Endpoint: /api/v1/health (Port 30452)</div>
+                <option selected value="30452">Control Service</option>
+                <option value="30442">Border Router</option>
+                <option value="30455">Daemon Service</option>
+            </select>
 
-            <!-- Server Status -->
-            <div id="serverStatus" class="server-card">
-                <h3>Server Status</h3>
-                <p>Select a server and click "Check Server Status"</p>
+            <button class="btn btn-primary" onclick="checkServiceStatus()">Check Service Status</button>
+            <div class="url-display">Endpoint: /info</div>
+
+            <div id="serviceStatus" class="server-card">
+                <h3>Service Status</h3>
+                <p>Select a server and service and click "Check Service Status"</p>
             </div>
 
             <!-- Topology Information -->
             <div id="topologySection">
                 <h2>Topology Information</h2>
-
-                <button class="btn btn-primary" hx-get="/proxy" hx-target="#topologyData"
-                    hx-vals='js:{target: document.getElementById("serverSelect").value + ":30442", endpoint: "/topology"}'
-                    hx-trigger="click" onclick="updateUrlDisplay(this)">
-                    Load Topology
-                </button>
-
+                <button class="btn btn-primary" onclick="loadTopology()">Load Topology</button>
                 <div class="url-display">Endpoint: /topology (Port 30452)</div>
-
                 <div id="topologyData" class="server-card">
                     <h3>Topology Data</h3>
                     <p>Click "Load Topology" to fetch topology data</p>
@@ -264,38 +249,23 @@
         <div id="config-tab" class="tab-content">
             <h2>Configuration Management</h2>
 
-            <!-- Current Configuration -->
             <div id="currentConfig" class="server-card">
                 <h3>Current Configuration</h3>
                 <p>Select a server and click "Load Configuration"</p>
             </div>
-
-            <button class="btn btn-primary" hx-get="/proxy" hx-target="#currentConfig"
-                hx-vals='js:{target: document.getElementById("serverSelect").value + ":30442", endpoint: "/config"}'
-                hx-trigger="click" onclick="updateUrlDisplay(this)">
-                Load Configuration
-            </button>
-
+            <button class="btn btn-primary" onclick="loadConfiguration()">Load Configuration</button>
             <div class="url-display">Endpoint: /config (Port 30452)</div>
 
-            <!-- Update Configuration Form -->
             <div class="server-card">
                 <h3>Update Configuration</h3>
-                <form id="configForm" hx-post="/scion/config" hx-target="#configResult" hx-swap="innerHTML"
-                    hx-include="#serverSelect">
-                    <input type="hidden" name="server" id="configServer">
-
+                <form id="configForm" onsubmit="applyConfiguration(event)">
                     <div>
                         <label for="configData">Configuration JSON:</label>
                         <textarea id="configData" name="config" rows="6" placeholder='{"key": "value"}'></textarea>
                     </div>
-
-                    <button type="submit" class="btn btn-primary" onclick="updateUrlDisplay(this)">Apply
-                        Configuration</button>
+                    <button type="submit" class="btn btn-primary">Apply Configuration</button>
                 </form>
-
                 <div class="url-display">Endpoint: /scion/config (Port 8080)</div>
-
                 <div id="configResult"></div>
             </div>
         </div>
@@ -303,19 +273,10 @@
         <!-- Quick Actions Tab -->
         <div id="actions-tab" class="tab-content">
             <h2>Quick Actions</h2>
-
-            <button class="btn btn-secondary" hx-post="/scion/restart" hx-target="#quickActionResult"
-                hx-include="#serverSelect" hx-trigger="click" onclick="updateUrlDisplay(this)">
-                Restart Server
-            </button>
-
+            <button class="btn btn-secondary" onclick="quickAction('/scion/restart')">Restart Server</button>
             <div class="url-display">Endpoint: /scion/restart (Port 8080)</div>
 
-            <button class="btn btn-secondary" hx-get="/scion/status" hx-target="#quickActionResult"
-                hx-include="#serverSelect" hx-trigger="click" onclick="updateUrlDisplay(this)">
-                Check Status
-            </button>
-
+            <button class="btn btn-secondary" onclick="quickAction('/scion/status')">Check Status</button>
             <div class="url-display">Endpoint: /scion/status (Port 8080)</div>
 
             <div id="quickActionResult" class="server-card">
@@ -325,9 +286,9 @@
 
         <!-- Request Information Panel -->
         <div class="server-card">
-            <h3>HTMX Request Information</h3>
+            <h3>Request Information</h3>
             <div id="requestInfo" class="request-info">
-                HTMX will make requests to these endpoints with the selected server IP.<br>
+                Requests will be made to these endpoints with the selected server IP.<br>
                 The server should proxy these requests to the appropriate ports:<br>
                 - /scion/status, /scion/config, /scion/restart → Port 8080<br>
                 - /scion/topology → Port 30452
@@ -336,70 +297,109 @@
     </div>
 
     <script>
-        // Update the server URL display when selection changes
-        document.getElementById('serverSelect').addEventListener('change', function (e) {
+        // Populate server dropdown
+        const serverSelect = document.getElementById('serverSelect');
+        for (let i = 1; i <= 4; i++) {
+            for (let j = 1; j <= 5; j++) {
+                const ip = `10.100.0.${i}${j}`;
+                const option = document.createElement('option');
+                option.value = ip;
+                option.textContent = `scion${(i - 1) * 5 + j} : ${ip}`;
+                serverSelect.appendChild(option);
+            }
+        }
+
+        serverSelect.addEventListener('change', e => {
             const server = e.target.value;
-            document.getElementById('serverUrlDisplay').textContent = server ?
-                `Selected server: ${server}` : 'No server selected';
+            document.getElementById('serverUrlDisplay').textContent =
+                server ? `Selected server: ${server}` : 'No server selected';
         });
 
-        // Tab switching function
-        function switchTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
+        const serviceSelect = document.getElementById('serviceSelect')
 
-            // Show selected tab
+
+        // Tab switching
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-
-            // Update tab headers
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
-        // Update URL display for HTMX buttons
-        function updateUrlDisplay(element) {
-            const serverSelect = document.getElementById('serverSelect');
+        // Request helper
+        async function makeRequest(method, endpoint, body, targetId) {
             const server = serverSelect.value;
-
             if (!server) {
                 alert('Please select a server first');
-                return false;
+                return;
             }
 
-            // Get the endpoint from the hx-get or hx-post attribute
-            const endpoint = element.getAttribute('hx-get') || element.getAttribute('hx-post');
-            const method = element.getAttribute('hx-get') ? 'GET' : 'POST';
-            const vals = element.getAttribute('hx-vals')
+            const target = document.getElementById(targetId);
+            target.classList.add('loading');
+            document.getElementById('requestInfo').textContent = `${method} ${endpoint}`;
 
-            // Display the full URL that would be requested
-            document.getElementById('requestInfo').textContent =
-                `${method} ${endpoint}`;
+            try {
+                const options = { method, headers: { 'Content-Type': 'application/json' } };
+                if (body) options.body = JSON.stringify(body);
 
-            return true;
+                const port = document.getElementById("serviceSelect").value
+
+                // We proxy every request
+                const requestURL = "/proxy?" + new URLSearchParams({
+                    target: server + ":" + serviceSelect.value, // serviceSelect stores the port number for each service
+                    endpoint: endpoint,
+                    method: method
+                })
+
+                const res = await fetch(requestURL, options);
+                if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await res.json();
+                    target.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    const text = await res.text();
+                    target.innerHTML = `<pre>${text}</pre>`;
+                }
+            } catch (err) {
+                target.innerHTML = `<div class="status status-offline">Error: ${err.message}</div>`;
+            } finally {
+                target.classList.remove('loading');
+            }
         }
 
-        // Add loading indicators
-        document.body.addEventListener('htmx:beforeRequest', function (e) {
-            e.detail.target.classList.add('loading');
-        });
+        // Actions
+        function checkServiceStatus() {
+            const service = document.getElementById('serviceSelect').value;
+            if (!service) {
+                alert('Please select a service');
+                return;
+            }
+            makeRequest('GET', '/info', null, 'serviceStatus');
+        }
 
-        document.body.addEventListener('htmx:afterRequest', function (e) {
-            e.detail.target.classList.remove('loading');
-        });
+        function loadTopology() {
+            makeRequest('GET', '/topology', null, 'topologyData');
+        }
 
-        // Error handling
-        document.body.addEventListener('htmx:responseError', function (e) {
-            const target = e.detail.target;
-            target.innerHTML = `
-                <div class="status status-offline">
-                    Error: ${e.detail.xhr.status} - ${e.detail.xhr.statusText}
-                </div>
-            `;
-        });
+        function loadConfiguration() {
+            makeRequest('GET', '/config', null, 'currentConfig');
+        }
+
+        function applyConfiguration(event) {
+            event.preventDefault();
+            const config = document.getElementById('configData').value;
+            try {
+                const parsed = JSON.parse(config);
+                makeRequest('POST', '/scion/config', parsed, 'configResult');
+            } catch (e) {
+                alert('Invalid JSON');
+            }
+        }
+
+        function quickAction(endpoint) {
+            makeRequest('POST', endpoint, null, 'quickActionResult');
+        }
     </script>
 </body>
 
