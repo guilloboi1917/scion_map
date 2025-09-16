@@ -15,3 +15,9 @@ connection = "/var/lib/scion/control.path.db"
 
 [trust_db]
 connection = "/var/lib/scion/control.trust.db"
+
+[metrics]
+prometheus = "0.0.0.0:30452"
+
+# [api]
+# addr = "0.0.0.0:30452"

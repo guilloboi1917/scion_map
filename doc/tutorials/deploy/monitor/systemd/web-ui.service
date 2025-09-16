@@ -1,5 +1,5 @@
 [Unit]
-Description=SCION API Server
+Description=Monitor WebUI
 After=network.target
 Wants=network.target
 StartLimitBurst=1
@@ -7,7 +7,7 @@ StartLimitIntervalSec=1s
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/scion-api-server
+ExecStart=/usr/local/bin/web-ui
 
 Restart=on-failure
 RestartSec=5s
@@ -17,8 +17,8 @@ StandardOutput=journal
 StandardError=journal
 
 # sET Environment variables and working directory
-Environment=DATA_DIR=/var/lib/scion-api-server
-WorkingDirectory=/var/lib/scion-api-server
+Environment=DATA_DIR=/var/lib/web-ui
+WorkingDirectory=/var/lib/web-ui
 
 [Install]
 WantedBy=multi-user.target
