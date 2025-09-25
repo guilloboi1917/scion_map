@@ -9,3 +9,4 @@
 - [ ] Draw diagram of full topology 
 - [ ] Adapt Makefile to run without building anew everytime
 - [ ] Fix: When running make up after NOT running make purge, there is an error with the pki-generation scripts
+- [ ] Document extensibilty of network

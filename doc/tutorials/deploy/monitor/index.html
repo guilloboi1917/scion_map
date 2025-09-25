@@ -44,6 +44,7 @@
             border: 1px solid #ddd;
             padding: 20px;
             border-radius: 8px;
+            margin: 10px;
             background: #fafafa;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
@@ -273,11 +274,48 @@
         <!-- Quick Actions Tab -->
         <div id="actions-tab" class="tab-content">
             <h2>Quick Actions</h2>
-            <button class="btn btn-secondary" onclick="quickAction('/scion/restart')">Restart Server</button>
-            <div class="url-display">Endpoint: /scion/restart (Port 8080)</div>
 
+            <select id="requestServerSelect" name="requestServer">
+                <option value="">Select AS node</option>
+            </select>
+            <div class="url-display">Destination of ping commands</div>
+
+            <br>
+            <script>
+                const requestServerSelect = document.getElementById('requestServerSelect');
+                for (let i = 1; i <= 4; i++) {
+                    for (let j = 1; j <= 5; j++) {
+                        const addr = `${14 + i}-ffaa:1:${j}`;
+                        const option = document.createElement('option');
+                        option.value = addr;
+                        option.textContent = `scion${(i - 1) * 5 + j} : ${addr}`;
+                        requestServerSelect.appendChild(option);
+                    }
+                }
+            </script>
+
+            <button class="btn btn-secondary" onclick="quickAction('/scion/restart')">Restart Node</button>
             <button class="btn btn-secondary" onclick="quickAction('/scion/status')">Check Status</button>
-            <div class="url-display">Endpoint: /scion/status (Port 8080)</div>
+
+            <br>
+
+            <button class="btn btn-secondary" onclick="quickAction('/api/dispatch/ping/start')">Start Ping</button>
+            <button class="btn btn-secondary" onclick="quickAction('/api/dispatch/ping/stop')">Stop Ping</button>
+            <button class=" btn btn-secondary" onclick="quickAction('/api/dispatch/ping/files')">Get files</button>
+
+            <br>
+
+            <button class="btn btn-secondary" onclick="quickAction('/api/dispatch/scionping/start')">Start Scion
+                Ping</button>
+            <button class="btn btn-secondary" onclick="quickAction('/api/dispatch/scionping/stop')">Stop Scion
+                Ping</button>
+            <button class="btn btn-secondary" onclick="quickAction('/api/dispatch/scionping/files')">Get files</button>
+
+            <br>
+
+            <button class="btn btn-secondary" onclick="quickAction('/api/capture/start')">Start Packet Capture</button>
+            <button class="btn btn-secondary" onclick="quickAction('/api/capture/stop')">Stop Packet Capture</button>
+            <button class="btn btn-secondary" onclick="quickAction('/api/capture/files')">Get files</button>
 
             <div id="quickActionResult" class="server-card">
                 <p>Action results will appear here</p>

@@ -27,6 +27,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -35,6 +36,8 @@ import (
 	"os/exec"
 	"sync"
 	"time"
+
+	"github.com/scionproto/scion/pkg/addr"
 )
 
 // Global state for managing the capture process
@@ -73,9 +76,9 @@ var currentPing CommandState
 var currentScionPing CommandState
 
 // locations where to store data
-var pingResultLocation = "/var/lib/scion-api-server/ping-results"
-var scionPingResultLocation = "/var/lib/scion-api-server/scion-ping-results"
-var packetCapturesResultLocation = "/var/lib/scion-api-server/packet-captures"
+var pingResultLocation = "/var/lib/scion-api-server/ping-results/"
+var scionPingResultLocation = "/var/lib/scion-api-server/scion-ping-results/"
+var packetCapturesResultLocation = "/var/lib/scion-api-server/packet-captures/"
 
 // Struct for file information
 type FileInfo struct {
@@ -402,7 +405,104 @@ func getAvailablePingResults(w http.ResponseWriter, r *http.Request) {
 }
 
 func startScionPing(w http.ResponseWriter, r *http.Request) {
-	return
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid Method - use Post", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var request struct {
+		Addr  string `json:"addr"`
+		Count *int   `json:"count,omitempty"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid body", http.StatusBadRequest)
+		return
+	}
+
+	// validate addr
+	_, err := addr.ParseAddr(request.Addr)
+	if err != nil {
+		http.Error(w, "Invalid Scion Address", http.StatusBadRequest)
+		return
+	}
+
+	scionPingMutex.Lock()
+	defer scionPingMutex.Unlock()
+
+	if currentScionPing.InProgress {
+		http.Error(w, "A scion ping is already in progress", http.StatusConflict)
+		return
+	}
+
+	args := []string{request.Addr}
+
+	var countDisplay string = "continuous" // Default display value
+
+	// Check if count provided
+	if request.Count != nil {
+		// Convert to string
+		countStr := fmt.Sprintf("%d", *request.Count)
+
+		// Append to args
+		args = append([]string{"-c", countStr}, args...)
+
+		// To display for logging
+		countDisplay = fmt.Sprintf("%d", *request.Count)
+	}
+
+	// We want stdout of the ping command to a file
+	outputFile := fmt.Sprintf("%s/scion-ping_%d.log", scionPingResultLocation, time.Now().Unix())
+
+	// Start the command
+	scionPingCmd = exec.Command("scion ping", args...)
+
+	// Create output file
+	file, err := os.OpenFile(outputFile, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to create output file: %v", err), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	scionPingCmd.Stdout = file
+	scionPingCmd.Stderr = file
+
+	if err := scionPingCmd.Start(); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to start ping for dst: %s and count: %s", request.Addr, countDisplay), http.StatusInternalServerError)
+		return
+	}
+
+	currentScionPing = CommandState{
+		InProgress: true,
+		PID:        scionPingCmd.Process.Pid,
+		StartTime:  time.Now(),
+		OutputFile: outputFile,
+	}
+
+	log.Printf("Started scion ping (PID: %d), dst: %s count: %s", currentScionPing.PID, request.Addr, countDisplay)
+
+	// Finally run the wait command
+
+	go func() {
+		err := scionPingCmd.Wait()
+
+		// Lock to update safely
+		scionPingMutex.Lock()
+		defer scionPingMutex.Unlock()
+
+		if err != nil {
+			log.Printf("ping process (PID: %d) finished with error: %v", currentScionPing.PID, err)
+		} else {
+			log.Printf("ping process (PID: %d) finished successfully", currentScionPing.PID)
+		}
+
+		currentScionPing.InProgress = false
+		currentScionPing.PID = 0
+	}()
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Scion Pinging started (PID: %d)", currentScionPing.PID)
 }
 
 func modifyPathPolicyConfig(w http.ResponseWriter, r *http.Request) {
@@ -431,6 +531,45 @@ func main() {
 	http.HandleFunc("/api/dispatch/ping/stop", stopPing)
 	http.HandleFunc("/api/dispatch/scionping/start", startScionPing)
 	http.HandleFunc("/api/dispatch/ping/files", getAvailablePingResults)
+
+	// To download files
+	http.HandleFunc("/api/file", func(w http.ResponseWriter, r *http.Request) {
+		fileName := r.URL.Query().Get("name")
+		if fileName == "" {
+			http.Error(w, "Invalid request - No filename found", http.StatusBadRequest)
+			return
+		}
+
+		src := r.URL.Query().Get("src")
+		if src == "" {
+			http.Error(w, "Invalid request - No src found (ping | scionping | capture)", http.StatusBadRequest)
+			return
+		}
+
+		var fileDir = ""
+		var fileSuffix = ".log"
+
+		switch src {
+		case "ping":
+			fileDir = pingResultLocation
+		case "scionping":
+			fileDir = scionPingResultLocation
+		default:
+			fileDir = packetCapturesResultLocation
+			fileSuffix = ".pcap"
+		}
+
+		var fileLocation = fileDir + fileName + fileSuffix
+
+		if _, err := os.Stat(fileLocation); err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				http.Error(w, "File doesnt exist", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		http.ServeFile(w, r, fileLocation)
+	})
 
 	log.Println("SCION AS Container API running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
