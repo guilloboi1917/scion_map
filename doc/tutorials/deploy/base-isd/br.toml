@@ -3,3 +3,6 @@
 [general]
 id = "br"
 config_dir = "/etc/scion"
+
+[metrics]
+prometheus = "0.0.0.0:30442"

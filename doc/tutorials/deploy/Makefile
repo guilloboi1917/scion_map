@@ -20,8 +20,7 @@ build-scion%:
 		-f ./scion$*/Dockerfile \
 		./scion$*
 
-# Leave in for now
-build-monitor:
+build-monitor: build-debian-base
 	docker build -t monitor:1.0 \
 	-f ./monitor/Dockerfile \
 	./monitor

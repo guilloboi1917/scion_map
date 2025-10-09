@@ -21,9 +21,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl wget tar ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy binary and systemd unit file
+COPY web-ui /usr/local/bin/
+RUN chmod +x /usr/local/bin/web-ui
+
+COPY /systemd/web-ui.service /etc/systemd/system/
+RUN mkdir -p /var/lib/web-ui
+
+RUN systemctl enable web-ui.service
+
+
 # If any command in a pipeline fails,
 # it should still return a success status.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Keep running
-CMD ["tail", "-f", "/dev/null"]
+EXPOSE 8080
+
+# # Keep running
+# CMD ["tail", "-f", "/dev/null"]
+
+CMD ["/lib/systemd/systemd", "--unit=multi-user.target"]

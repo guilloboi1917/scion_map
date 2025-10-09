@@ -1,16 +1,24 @@
 [Unit]
 Description=SCION API Server
 After=network.target
-Requires=network.target
+Wants=network.target
+StartLimitBurst=1
+StartLimitIntervalSec=1s
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/usr/local/bin/scion-api-server
+
 Restart=on-failure
 RestartSec=5s
-RemainAfterExit=yes  # Track "active" state after exit
+# Track "active" state after exit
+RemainAfterExit=yes
 StandardOutput=journal
 StandardError=journal
+
+# sET Environment variables and working directory
+Environment=DATA_DIR=/var/lib/scion-api-server
+WorkingDirectory=/var/lib/scion-api-server
 
 [Install]
 WantedBy=multi-user.target

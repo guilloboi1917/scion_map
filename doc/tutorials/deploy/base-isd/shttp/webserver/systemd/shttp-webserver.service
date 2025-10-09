@@ -1,0 +1,22 @@
+[Unit]
+Description=SCION shttp Webserver
+Documentation=https://github.com/netsec-ethz/scion-apps/blob/master/_examples/shttp/README.md
+After=network-online.target scion-daemon.service
+Requires=scion-daemon.service
+StartLimitBurst=1
+StartLimitIntervalSec=1s
+
+[Service]
+Type=oneshot
+User=scion
+Group=scion
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/local/bin/shttp-webserver
+Restart=on-failure
+RestartSec=5s
+RemainAfterExit=true
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
